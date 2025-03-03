@@ -3,14 +3,34 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { BicyclesModule } from './modules/bicycles/bicycles.module';
 import { StationsModule } from './modules/stations/stations.module';
 import { RentalsModule } from './modules/rentals/rentals.module';
 import { BikesModule } from './modules/bikes/bikes.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { KeyTokenModule } from './modules/key-token/key-token.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, BicyclesModule, StationsModule, RentalsModule, BikesModule, TransactionsModule],
+  imports: [
+    ConfigModule.forRoot({ 
+      isGlobal: true 
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
+    UsersModule, 
+    AuthModule, 
+    StationsModule, 
+    RentalsModule, 
+    BikesModule, 
+    TransactionsModule,
+    KeyTokenModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
