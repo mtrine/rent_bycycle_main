@@ -1,34 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { StationsService } from './stations.service';
 import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
+import { ResponseMessage } from 'src/decorators/response-message.decorator';
 
 @Controller('stations')
 export class StationsController {
-  constructor(private readonly stationsService: StationsService) {}
+  constructor(private readonly stationsService: StationsService) { }
 
   @Post()
+  @ResponseMessage('Station created successfully')
   create(@Body() createStationDto: CreateStationDto) {
     return this.stationsService.create(createStationDto);
   }
 
   @Get()
-  findAll() {
-    return this.stationsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.stationsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStationDto: UpdateStationDto) {
-    return this.stationsService.update(+id, updateStationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stationsService.remove(+id);
+  @ResponseMessage('Stations fetched successfully')
+  findAll(@Query('limit') limit: number, @Query('page') page: number) {
+    return this.stationsService.findAll(limit, page);
   }
 }

@@ -107,7 +107,7 @@ export class AuthService {
     }
 
     async handleRefreshToken(refreshToken: string, res: Response) {
-        if(!refreshToken){
+        if (!refreshToken) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
         }
         // Kiểm tra nếu refresh token đã được sử dụng
@@ -198,5 +198,16 @@ export class AuthService {
                 'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
             ),
         });
+    }
+
+    async logout(refreshToken: string, res: Response) {
+        // Remove the refresh token from the database
+        await this.keyTokenService.deleteByRefreshToken(refreshToken);
+
+        // Clear the cookies
+        res.clearCookie('refresh_token');
+        res.clearCookie('access_token');
+
+        return { message: 'Logout successful' };
     }
 }

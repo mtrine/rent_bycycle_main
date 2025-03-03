@@ -13,7 +13,7 @@ export class KeyTokenService {
     @InjectModel(KeyToken.name) private keyTokenModel: Model<KeyToken>
   ) { }
 
-  async createKeyToken(user: string, access_publicKey: string, access_privateKey: string, refresh_publicKey: string, refresh_privateKey: string ,refreshToken: string) {
+  async createKeyToken(user: string, access_publicKey: string, access_privateKey: string, refresh_publicKey: string, refresh_privateKey: string, refreshToken: string) {
 
     const filter =
     {
@@ -60,5 +60,9 @@ export class KeyTokenService {
         $set: { refreshToken: newRefreshToken },
         $addToSet: { refreshTokensUsed: oldRefreshToken }
       })
+  }
+
+  async deleteByRefreshToken(refreshToken: string) {
+    return await this.keyTokenModel.findOneAndDelete({ refreshToken })
   }
 }

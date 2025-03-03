@@ -1,26 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
+import { StationsRepository } from './stations.repository';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Injectable()
 export class StationsService {
-  create(createStationDto: CreateStationDto) {
-    return 'This action adds a new station';
+
+  constructor(
+    private readonly stationsRepository: StationsRepository
+  ) { }
+  async create(createStationDto: CreateStationDto) {
+    return await this.stationsRepository.createStation(createStationDto);
   }
 
-  findAll() {
-    return `This action returns all stations`;
+  async findAll(limit: number = 10, page: number = 1) {
+    const stationList = await this.stationsRepository.getAllStations(limit, (page - 1) * limit);
+    return UtilsService.paginateResponse(stationList, limit, page);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} station`;
-  }
-
-  update(id: number, updateStationDto: UpdateStationDto) {
-    return `This action updates a #${id} station`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} station`;
-  }
 }

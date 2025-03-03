@@ -1,4 +1,3 @@
-import { Type } from '@nestjs/common';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, ObjectId, Types } from 'mongoose';
 import { StatusBike } from 'src/enums/status-bike.enum';

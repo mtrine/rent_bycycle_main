@@ -4,15 +4,21 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { TransformInterceptor } from './inteceptors/transform.interceptor';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
+import { join } from 'path';
+import { JwtAccessTokenGuard } from './guards/jwt-access.guard';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const reflector = app.get(Reflector);
-  app.useGlobalInterceptors(new  TransformInterceptor(reflector));
+  app.useGlobalInterceptors(new TransformInterceptor(reflector));
   app.useGlobalPipes(new ValidationPipe(
     {
       whitelist: true
     }
   ));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  console.log(join(__dirname, '..', 'public'));
+  app.useGlobalGuards(new JwtAccessTokenGuard(reflector));
   app.use(cookieParser());
   app.setGlobalPrefix('/api/');
   app.enableVersioning({
