@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-
 import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
@@ -8,6 +7,7 @@ import { TypeTransaction } from 'src/enums/type-transaction.enum';
 import { PaymentMethod } from 'src/enums/paymentMethod.enum';
 import { StatusTransaction } from 'src/enums/status-transaction.enum';
 import { UsersRepository } from '../users/user.repository';
+import { CreateTransactionDto } from '../transactions/dto/create-transaction.dto';
 
 const moment = require('moment');
 
@@ -25,33 +25,16 @@ export class ZalopayPaymentService {
       key2: this.configService.get<string>('ZALOPAY_KEY2'),
       endpoint: this.configService.get<string>('ZALOPAY_ENDPOINT')
     };
+
+
   }
+
   async createZaloPayPayment(amount: number, userId: string) {
 
-    const embed_data = {
-      redirecturl: this.configService.get<string>('ZALOPAY_REDIRECT_URL'),
-
-    };
 
     const items = [{}];
     const transID = Math.floor(Math.random() * 1000000);
-    const order = {
-      app_id: this.config.app_id,
-      app_trans_id: `${moment().format('YYMMDD')}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-      app_user: "Bikey",
-      app_time: Date.now(), // miliseconds
-      item: JSON.stringify(items),
-      embed_data: JSON.stringify(embed_data),
-      amount: amount,
-      description: `Bikey - Payment for the transaction #${transID}`,
-      bank_code: "",
-      callback_url: `${this.configService.get<string>('ZALOPAY_CALLBACK_URL')}`,
-      mac: ""
-    };
 
-    // appid|app_trans_id|appuser|amount|apptime|embeddata|item
-    const data = this.config.app_id + "|" + order.app_trans_id + "|" + order.app_user + "|" + order.amount + "|" + order.app_time + "|" + order.embed_data + "|" + order.item;
-    order.mac = this.createSecureHash(data, this.config.key1)
 
     const newPayment = await this.transactionRepository.createTransaction({
       userId: userId,
@@ -60,7 +43,28 @@ export class ZalopayPaymentService {
       type: TypeTransaction.DEPOSIT,
       rentalId: null,
     });
+    const embed_data = {
+      redirecturl: this.configService.get<string>('ZALOPAY_REDIRECT_URL'),
+      transactionId: newPayment._id.toString()
+    };
+    
+    const order = {
+      app_id: this.config.app_id,
+      app_trans_id: `${moment().format('YYMMDD')}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+      app_user: "Bikey",
+      app_time: Date.now(), // miliseconds
+      item: JSON.stringify(items),
+      embed_data: JSON.stringify(embed_data),
+      amount: amount,
+      description: `Bikey - Payment for the deposit #${transID}`,
+      bank_code: "",
+      callback_url: `${this.configService.get<string>('ZALOPAY_CALLBACK_URL')}`,
+      mac: ""
+    };
 
+    // appid|app_trans_id|appuser|amount|apptime|embeddata|item
+    const data = this.config.app_id + "|" + order.app_trans_id + "|" + order.app_user + "|" + order.amount + "|" + order.app_time + "|" + order.embed_data + "|" + order.item;
+    order.mac = this.createSecureHash(data, this.config.key1)
     try {
       const result = await axios.post(this.config.endpoint, null, { params: order });
       return result.data;
@@ -68,6 +72,7 @@ export class ZalopayPaymentService {
     catch (error) {
       console.log(error);
     }
+
   }
 
 
@@ -100,8 +105,9 @@ export class ZalopayPaymentService {
         // thanh toán thành công
         // merchant cập nhật trạng thái cho đơn hàng
         let dataJson = JSON.parse(dataStr);
-        const transaction =await this.transactionRepository.updateStatus(dataJson['app_trans_id'], StatusTransaction.SUCCESS);
-        if(transaction){
+        let embedData= JSON.parse(dataJson['embed_data']);
+        const transaction = await this.transactionRepository.updateStatus(embedData['transactionId'], StatusTransaction.SUCCESS);
+        if (transaction) {
           await this.userRepository.updateWallet(transaction.userId.toString(), transaction.amount);
         }
         result.return_code = 1;
@@ -119,21 +125,20 @@ export class ZalopayPaymentService {
 
 }
 
-// update order's status = success where app_trans_id = {
+// dataJson {
 //   app_id: 2554,
-//   app_trans_id: '241005_19260',
-//   app_time: 1728140514887,
-//   app_user: 'The Élégance Hotel',
-//   amount: 100000,
-//   embed_data: '{"redirecturl":"https://www.youtube.com"}',
+//   app_trans_id: '250306_882955',
+//   app_time: 1741277732805,
+//   app_user: 'Bikey',
+//   amount: 30000,
+//   embed_data: '{"redirecturl":"http://localhost:3000/payment-return","transactionId":"67c9ca24f0082933710e26fb"}',      
 //   item: '[{}]',
-//   zp_trans_id: 241005000003365,
-//   server_time: 1728140571807,
-//   channel: 39,
-//   merchant_user_id: '4n2LtVGwMfjZhIs7wv82hA',
-//   zp_user_id: '4n2LtVGwMfjZhIs7wv82hA',
+//   zp_trans_id: 250306000021833,
+//   server_time: 1741277768087,
+//   channel: 38,
+//   merchant_user_id: 'VaHCJtWvIhogAqFzP81amQdXgyRTf_F3W7enEF2MqL8',
+//   zp_user_id: 'VaHCJtWvIhogAqFzP81amQdXgyRTf_F3W7enEF2MqL8',
 //   user_fee_amount: 0,
 //   discount_amount: 0
 // }
-
 

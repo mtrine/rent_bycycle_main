@@ -6,6 +6,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { JwtAccessTokenGuard } from './guards/jwt-access.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -18,6 +19,7 @@ async function bootstrap() {
   ));
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.useGlobalGuards(new JwtAccessTokenGuard(reflector));
+  app.useGlobalGuards(new RolesGuard(reflector));
   app.use(cookieParser());
   app.setGlobalPrefix('/api/');
   app.enableVersioning({
