@@ -17,7 +17,6 @@ async function bootstrap() {
     }
   ));
   app.useStaticAssets(join(__dirname, '..', 'public'));
-  console.log(join(__dirname, '..', 'public'));
   app.useGlobalGuards(new JwtAccessTokenGuard(reflector));
   app.use(cookieParser());
   app.setGlobalPrefix('/api/');

@@ -50,14 +50,14 @@ export class AuthService {
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
             secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
-            maxAge: +ms(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME')),
+            maxAge: +ms(`${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`),
             sameSite: 'none'
         })
 
         res.cookie('access_token', accessToken, {
             httpOnly: true,
             secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
-            maxAge: +ms(this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME')),
+            maxAge: +ms(`${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`),
             sameSite: 'none'
         })
 
@@ -89,14 +89,14 @@ export class AuthService {
             res.cookie('refresh_token', refreshToken, {
                 httpOnly: true,
                 secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
-                maxAge: +ms(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME')),
+                maxAge: +ms(`${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`),
                 sameSite: 'none'
             })
-
+    
             res.cookie('access_token', accessToken, {
                 httpOnly: true,
                 secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
-                maxAge: +ms(this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME')),
+                maxAge: +ms(`${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`),
                 sameSite: 'none'
             })
         }
@@ -161,15 +161,14 @@ export class AuthService {
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
             secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
-            // secure: true,
-            maxAge: +ms(this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME')),
+            maxAge: +ms(`${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`),
             sameSite: 'none'
         })
 
         res.cookie('access_token', accessToken, {
             httpOnly: true,
             secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
-            maxAge: +ms(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME')),
+            maxAge: +ms(`${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`),
             sameSite: 'none'
         })
 

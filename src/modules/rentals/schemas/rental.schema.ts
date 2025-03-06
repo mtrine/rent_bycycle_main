@@ -27,7 +27,7 @@ export class Rental {
     endStation: Types.ObjectId | null;
 
     // Thời gian bắt đầu thuê
-    @Prop({ type: Date, required: true })
+    @Prop({ type: Date, default: new Date() })
     startTime: Date;
 
     // Thời gian trả xe (nullable nếu chưa trả)
@@ -51,5 +51,5 @@ export class Rental {
 // Tạo schema factory
 export const RentalSchema = SchemaFactory.createForClass(Rental);
 
-    // Thêm index cho userId, bikeId, và startTime
-    RentalSchema.index({ userId: 1, bikeId: 1, startTime: 1 });
+// Thêm index cho userId, bikeId, và startTime
+RentalSchema.index({ userId: 1, bikeId: 1, startTime: 1 });

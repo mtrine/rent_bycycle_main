@@ -16,5 +16,6 @@ import { BikesRepository } from './bikes.repository';
   ],
   controllers: [BikesController],
   providers: [BikesService,BikesRepository],
+  exports: [BikesRepository]
 })
 export class BikesModule {}

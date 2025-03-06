@@ -6,7 +6,7 @@ import { Role } from 'src/enums/role.enum';
     timestamps: true, // Tự động thêm createdAt và updatedAt
 })
 export class User {
-    @Prop({ type: String, required: true }) // Số điện thoại liên kết Zalo, duy nhất
+    @Prop({ type: String, required: true, unique: true }) // Số điện thoại liên kết Zalo, duy nhất
     phoneNumber: string;
 
     @Prop({ type: String, required: true }) // Họ tên người dùng

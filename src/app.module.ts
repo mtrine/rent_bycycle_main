@@ -10,6 +10,8 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { KeyTokenModule } from './modules/key-token/key-token.module';
+import { OtpTokenModule } from './modules/otp-token/otp-token.module';
+import { FirebaseModule } from './modules/firebase/firebase.module';
 
 @Module({
   imports: [
@@ -29,7 +31,10 @@ import { KeyTokenModule } from './modules/key-token/key-token.module';
     RentalsModule, 
     BikesModule, 
     TransactionsModule,
-    KeyTokenModule
+    KeyTokenModule,
+    OtpTokenModule,
+    FirebaseModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

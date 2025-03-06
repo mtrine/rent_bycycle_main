@@ -37,4 +37,11 @@ export class UsersRepository {
             $set: { 'wallet.lastUpdated': new Date() }
         }, { new: true }).lean();
     }
+
+    async verifyUser(phoneNumber: string) {
+        return this.userModel.updateOne(
+            { phoneNumber },
+            { $set: { isVerified: true } },
+        );
+    }
 }
