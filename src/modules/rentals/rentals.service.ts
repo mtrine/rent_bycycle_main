@@ -12,6 +12,9 @@ import { StatusTransaction } from 'src/enums/status-transaction.enum';
 import { TypeTransaction } from 'src/enums/type-transaction.enum';
 import { PaymentMethod } from 'src/enums/paymentMethod.enum';
 import { TransactionsRepository } from '../transactions/transactions.repository,';
+import { StatusRental } from 'src/enums/status-rental.enum';
+import { ReturnBikeDto } from './dto/return-bike.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class RentalsService {
@@ -20,7 +23,7 @@ export class RentalsService {
     private readonly bikesRepository: BikesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly transactionsRepository: TransactionsRepository, // Thêm repository cho Transaction
-  ) {}
+  ) { }
 
   async createRental(createRentalDto: CreateRentalDto, userId: string) {
     const user = await this.usersRepository.findById(userId);
@@ -41,15 +44,15 @@ export class RentalsService {
     const rental = await this.rentalsRepository.createRental(createRentalDto, userId, bike.currentStation.toString());
 
     if (rental) {
-      await this.bikesRepository.updateStatus(createRentalDto.bikeId, StatusBike.INUSE);
+      await this.bikesRepository.updateStatus( StatusBike.INUSE,createRentalDto.bikeId,);
     }
     return rental;
   }
 
-  async returnBike(rentalId: string, userId: string) {
+  async returnBike(dto:ReturnBikeDto, userId: string) {
     // 1. Kiểm tra rental có tồn tại và thuộc về user không
-    const rental = await this.rentalsRepository.findById(rentalId,userId);
-    if (!rental || rental.userId.toString() !== userId) {
+    const rental = await this.rentalsRepository.findById(dto.rentalId, userId);
+    if (!rental ) {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
@@ -77,6 +80,7 @@ export class RentalsService {
     // 3. Lấy thông tin user và wallet
     const user = await this.usersRepository.findById(userId);
     if (!user) {
+      console.log("user");
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
@@ -104,7 +108,7 @@ export class RentalsService {
       userId: userId,
       type: TypeTransaction.PAYMENT,
       amount: rentalCost,
-      rentalId: rentalId,
+      rentalId: dto.rentalId,
       paymentMethod: PaymentMethod.WALLET,
       status: StatusTransaction.SUCCESS,
     };
@@ -113,10 +117,12 @@ export class RentalsService {
     // 7. Cập nhật rental (đánh dấu xe đã được trả)
     rental.endTime = endTime;
     rental.cost = rentalCost; // Giả sử có trường totalCost trong Rental schema
+    rental.endStation = new Types.ObjectId(dto.endStationId); // Giả sử có trường endStation trong Rental schema
+    rental.status = StatusRental.COMPLETED;
     await rental.save();
 
     // 8. Cập nhật trạng thái xe về AVAILABLE
-    await this.bikesRepository.updateStatus(rental.bikeId.toString(), StatusBike.AVAILABLE);
+    await this.bikesRepository.updateStatus(StatusBike.AVAILABLE,rental.bikeId.toString());
 
     return {
       message: 'Bike returned successfully',

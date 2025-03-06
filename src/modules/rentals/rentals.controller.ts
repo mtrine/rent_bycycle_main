@@ -5,6 +5,7 @@ import { UpdateRentalDto } from './dto/update-rental.dto';
 import { User } from 'src/decorators/user-infor.decorator';
 import { UserInterface } from '../users/dto/user.interface';
 import { ResponseMessage } from 'src/decorators/response-message.decorator';
+import { ReturnBikeDto } from './dto/return-bike.dto';
 
 @Controller('rentals')
 export class RentalsController {
@@ -16,9 +17,9 @@ export class RentalsController {
     return this.rentalsService.createRental(createRentalDto,user._id);
   }
 
-  @Patch(':id')
+  @Patch('/return-bike')
   @ResponseMessage('Return bike successfully')
-  returnBike(@Param('id') id: string,@User() user:UserInterface) {
-    return this.rentalsService.returnBike(id,user._id);
+  returnBike(@Body() dto:ReturnBikeDto,@User() user:UserInterface) {
+    return this.rentalsService.returnBike(dto,user._id);
   }
 }

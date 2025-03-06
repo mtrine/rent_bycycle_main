@@ -15,7 +15,7 @@ export class RentalsRepository {
         return await this.rentalModel.create({
             bikeId: createRentalDto.bikeId,
             userId: userId,
-            startStationId: startStationId,
+            startStation: startStationId,
         });
     }
 

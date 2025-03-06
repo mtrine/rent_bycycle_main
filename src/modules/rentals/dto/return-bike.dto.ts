@@ -1,10 +1,12 @@
-import { IsMongoId } from "class-validator";
+import { IsMongoId, IsNotEmpty } from "class-validator";
 
 export class ReturnBikeDto {
 
-    @IsMongoId({ message: 'rentalId phải là một MongoDB ObjectId hợp lệ' })
+    @IsMongoId()
+    @IsNotEmpty()
     rentalId: string;
 
-    @IsMongoId({ message: 'endStationId phải là một MongoDB ObjectId hợp lệ' })
+    @IsMongoId()
+    @IsNotEmpty()
     endStationId: string;
 }
