@@ -7,6 +7,7 @@ import { TransactionsRepository } from '../transactions/transactions.repository,
 import { TypeTransaction } from 'src/enums/type-transaction.enum';
 import { PaymentMethod } from 'src/enums/paymentMethod.enum';
 import { StatusTransaction } from 'src/enums/status-transaction.enum';
+import { UsersRepository } from '../users/user.repository';
 
 const moment = require('moment');
 
@@ -16,6 +17,7 @@ export class ZalopayPaymentService {
   constructor(
     private configService: ConfigService,
     private readonly transactionRepository: TransactionsRepository,
+    private readonly userRepository: UsersRepository,
   ) {
     this.config = {
       app_id: this.configService.get<string>('ZALOPAY_APP_ID'),
@@ -98,8 +100,10 @@ export class ZalopayPaymentService {
         // thanh toán thành công
         // merchant cập nhật trạng thái cho đơn hàng
         let dataJson = JSON.parse(dataStr);
-        await this.transactionRepository.updateStatus(dataJson['app_trans_id'], StatusTransaction.SUCCESS);
-
+        const transaction =await this.transactionRepository.updateStatus(dataJson['app_trans_id'], StatusTransaction.SUCCESS);
+        if(transaction){
+          await this.userRepository.updateWallet(transaction.userId.toString(), transaction.amount);
+        }
         result.return_code = 1;
         result.return_message = "success";
       }
