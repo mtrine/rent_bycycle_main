@@ -12,6 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { KeyTokenModule } from './modules/key-token/key-token.module';
 import { OtpTokenModule } from './modules/otp-token/otp-token.module';
 import { FirebaseModule } from './modules/firebase/firebase.module';
+import { AdruinoModule } from './modules/adruino/adruino.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { FirebaseModule } from './modules/firebase/firebase.module';
     KeyTokenModule,
     OtpTokenModule,
     FirebaseModule,
+    AdruinoModule,
 
   ],
   controllers: [AppController],

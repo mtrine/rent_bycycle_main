@@ -15,6 +15,8 @@ export class ErrorCode {
     static readonly PASSWORD_IS_NOT_MATCH = new ErrorCode(1411, 'Password is not match', HttpStatus.BAD_REQUEST)
     static readonly PHONE_NUMBER_IS_EXIST = new ErrorCode(1412, 'Phone number is exist', HttpStatus.BAD_REQUEST)
     static readonly REFRESH_TOKEN_NOT_FOUND = new ErrorCode(1413, 'Refresh token not found', HttpStatus.FORBIDDEN)
+    static readonly NOT_ENOUGH_MONEY = new ErrorCode(1414, 'Not enough money', HttpStatus.BAD_REQUEST)
+    static readonly BIKE_ALREADY_RETURNED = new ErrorCode(1415, 'Bike already returned', HttpStatus.BAD_REQUEST)
     constructor(public readonly code: number, public readonly message: string, public readonly status: HttpStatus) { }
 
     toJSON() {

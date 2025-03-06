@@ -28,7 +28,7 @@ export class UsersRepository {
     }
 
     async findById(id: string) {
-        return await this.userModel.findById(id).lean();
+        return await this.userModel.findById(id);
     }
 
     async updateWallet(id: string, amount: number) {

@@ -23,7 +23,7 @@ export class RentalsRepository {
         return await this.rentalModel.findOne({
             _id: rentalId,
             userId: userId
-        }).lean();
+        });
     }
 
     async returnBike(rentalId: string, endStationId: string, cost: number) {
