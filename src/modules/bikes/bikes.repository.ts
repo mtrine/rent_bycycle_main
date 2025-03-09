@@ -72,11 +72,11 @@ export class BikesRepository {
         ]);
     }
 
-    async updateStatus(status: string, id: string) {
-        return this.bikeModel.updateOne({ _id: id }, { status })
-    }
-
     async findById(id: string) {
         return this.bikeModel.findById(id).lean();
+    }
+
+    async updateBike(id:string, query:any){
+        return this.bikeModel.updateOne({_id:id}, query);
     }
 }

@@ -47,7 +47,7 @@ export class ZalopayPaymentService {
       redirecturl: this.configService.get<string>('ZALOPAY_REDIRECT_URL'),
       transactionId: newPayment._id.toString()
     };
-    
+
     const order = {
       app_id: this.config.app_id,
       app_trans_id: `${moment().format('YYMMDD')}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
@@ -86,26 +86,27 @@ export class ZalopayPaymentService {
       return_message: "success",
     };
 
+    let embedData;
     try {
       let dataStr = req.body.data;
       let reqMac = req.body.mac;
 
       let mac = this.createSecureHash(dataStr, this.config.key2);
-      console.log("mac =", mac);
 
-
+      let dataJson = JSON.parse(dataStr);
+      embedData = JSON.parse(dataJson['embed_data']);
       // kiểm tra callback hợp lệ (đến từ ZaloPay server)
       if (reqMac !== mac) {
+        console.log("mac not equal");
         // callback không hợp lệ
         result.return_code = -1;
         result.return_message = "mac not equal";
+        const transaction = await this.transactionRepository.updateStatus(embedData['transactionId'], StatusTransaction.FAILED);
         throw new BadRequestException("mac not equal");
       }
       else {
         // thanh toán thành công
-        // merchant cập nhật trạng thái cho đơn hàng
-        let dataJson = JSON.parse(dataStr);
-        let embedData= JSON.parse(dataJson['embed_data']);
+        // merchant cập nhật trạng thái cho đơn hàng=
         const transaction = await this.transactionRepository.updateStatus(embedData['transactionId'], StatusTransaction.SUCCESS);
         if (transaction) {
           await this.userRepository.updateWallet(transaction.userId.toString(), transaction.amount);
@@ -116,6 +117,11 @@ export class ZalopayPaymentService {
     } catch (ex) {
       result.return_code = 0; // ZaloPay server sẽ callback lại (tối đa 3 lần)
       result.return_message = ex.message;
+      let dataStr = req.body.data;
+      let dataJson = JSON.parse(dataStr);
+      embedData = JSON.parse(dataJson['embed_data']);
+      console.log(embedData);
+      const transaction = await this.transactionRepository.updateStatus(embedData['transactionId'], StatusTransaction.FAILED);
       return result;
     }
 
@@ -131,7 +137,7 @@ export class ZalopayPaymentService {
 //   app_time: 1741277732805,
 //   app_user: 'Bikey',
 //   amount: 30000,
-//   embed_data: '{"redirecturl":"http://localhost:3000/payment-return","transactionId":"67c9ca24f0082933710e26fb"}',      
+//   embed_data: '{"redirecturl":"http://localhost:3000/payment-return","transactionId":"67c9ca24f0082933710e26fb"}',
 //   item: '[{}]',
 //   zp_trans_id: 250306000021833,
 //   server_time: 1741277768087,

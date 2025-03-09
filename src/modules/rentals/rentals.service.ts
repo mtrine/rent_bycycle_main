@@ -44,15 +44,17 @@ export class RentalsService {
     const rental = await this.rentalsRepository.createRental(createRentalDto, userId, bike.currentStation.toString());
 
     if (rental) {
-      await this.bikesRepository.updateStatus( StatusBike.INUSE,createRentalDto.bikeId,);
+      await this.bikesRepository.updateBike(createRentalDto.bikeId, {
+        status: StatusBike.INUSE,
+      });
     }
     return rental;
   }
 
-  async returnBike(dto:ReturnBikeDto, userId: string) {
+  async returnBike(dto: ReturnBikeDto, userId: string) {
     // 1. Kiểm tra rental có tồn tại và thuộc về user không
     const rental = await this.rentalsRepository.findById(dto.rentalId, userId);
-    if (!rental ) {
+    if (!rental) {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
@@ -122,8 +124,10 @@ export class RentalsService {
     await rental.save();
 
     // 8. Cập nhật trạng thái xe về AVAILABLE
-    await this.bikesRepository.updateStatus(StatusBike.AVAILABLE,rental.bikeId.toString());
-
+    await this.bikesRepository.updateBike(rental.bikeId.toString(), {
+      status: StatusBike.AVAILABLE,
+      currentStation: dto.endStationId
+    });
     return {
       message: 'Bike returned successfully',
       rental,

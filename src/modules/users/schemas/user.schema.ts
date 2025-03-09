@@ -54,29 +54,73 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
+UserSchema.pre('findOneAndUpdate', function (next) {
+    const update = this.getUpdate() as any;
+
+    // Kiểm tra nếu có thay đổi trong wallet
+    if (update.$inc && update.$inc['wallet.balance']) {
+        const amount = update.$inc['wallet.balance'];
+
+        // Lấy document hiện tại để xử lý
+        this.model.findOne(this.getQuery()).then((user) => {
+            if (!user || !user.wallet) return next();
+
+            let { balance, debt } = user.wallet;
+            balance += amount; // Cập nhật balance với amount mới
+
+            // Logic xử lý balance và debt
+            if (debt > 0 && balance > 0) {
+                if (balance >= debt) {
+                    balance -= debt;
+                    debt = 0;
+                } else {
+                    debt -= balance;
+                    balance = 0;
+                }
+            }
+
+            // Đảm bảo balance và debt không âm
+            balance = Math.max(0, balance);
+            debt = Math.max(0, debt);
+
+            // Ghi đè giá trị mới vào update
+            update.$set = {
+                ...update.$set,
+                'wallet.balance': balance,
+                'wallet.debt': debt,
+                'wallet.lastUpdated': new Date(),
+            };
+
+            // Xóa $inc để tránh tăng dư
+            delete update.$inc['wallet.balance'];
+
+            this.setUpdate(update);
+            next();
+        }).catch(next);
+    } else {
+        next();
+    }
+});
+
+// Giữ nguyên middleware pre('save') nếu cần cho các trường hợp khác
 UserSchema.pre('save', function (next) {
     const user = this;
 
-    // Kiểm tra nếu wallet tồn tại
     if (user.wallet) {
         let { balance, debt } = user.wallet;
 
-        // Nếu có debt và balance
         if (debt > 0 && balance > 0) {
             if (balance >= debt) {
-                // Trường hợp balance lớn hơn hoặc bằng debt
                 balance -= debt;
                 debt = 0;
             } else {
-                // Trường hợp balance nhỏ hơn debt
                 debt -= balance;
                 balance = 0;
             }
 
-            // Cập nhật lại wallet
             user.wallet.balance = balance;
             user.wallet.debt = debt;
-            user.wallet.lastUpdated = new Date(); // Cập nhật thời gian
+            user.wallet.lastUpdated = new Date();
         }
     }
 
