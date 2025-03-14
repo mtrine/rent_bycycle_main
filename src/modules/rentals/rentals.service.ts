@@ -15,6 +15,7 @@ import { TransactionsRepository } from '../transactions/transactions.repository,
 import { StatusRental } from 'src/enums/status-rental.enum';
 import { ReturnBikeDto } from './dto/return-bike.dto';
 import { Types } from 'mongoose';
+import { AdruinoService } from '../adruino/adruino.service';
 
 @Injectable()
 export class RentalsService {
@@ -23,7 +24,8 @@ export class RentalsService {
     private readonly bikesRepository: BikesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly transactionsRepository: TransactionsRepository, // Thêm repository cho Transaction
-  ) { }
+    private readonly adruinoService: AdruinoService, // Thêm service
+  ) {}
 
   async createRental(createRentalDto: CreateRentalDto, userId: string) {
     const user = await this.usersRepository.findById(userId);
@@ -41,13 +43,20 @@ export class RentalsService {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
-    const rental = await this.rentalsRepository.createRental(createRentalDto, userId, bike.currentStation.toString());
+    const rental = await this.rentalsRepository.createRental(
+      createRentalDto,
+      userId,
+      bike.currentStation.toString(),
+    );
 
     if (rental) {
       await this.bikesRepository.updateBike(createRentalDto.bikeId, {
         status: StatusBike.INUSE,
       });
     }
+
+    await this.adruinoService.sendSignal('1'); // Gửi tín hiệu về Arduino để thông báo xe đã được thuê
+
     return rental;
   }
 
@@ -66,7 +75,9 @@ export class RentalsService {
     // 2. Tính toán chi phí thuê xe
     const startTime = rental.startTime;
     const endTime = new Date();
-    const rentalDurationMinutes = Math.ceil((endTime.getTime() - startTime.getTime()) / (1000 * 60)); // Thời gian thuê tính bằng phút
+    const rentalDurationMinutes = Math.ceil(
+      (endTime.getTime() - startTime.getTime()) / (1000 * 60),
+    ); // Thời gian thuê tính bằng phút
 
     let rentalCost = 0;
     if (rentalDurationMinutes <= 60) {
@@ -82,7 +93,7 @@ export class RentalsService {
     // 3. Lấy thông tin user và wallet
     const user = await this.usersRepository.findById(userId);
     if (!user) {
-      console.log("user");
+      console.log('user');
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
@@ -126,8 +137,10 @@ export class RentalsService {
     // 8. Cập nhật trạng thái xe về AVAILABLE
     await this.bikesRepository.updateBike(rental.bikeId.toString(), {
       status: StatusBike.AVAILABLE,
-      currentStation: dto.endStationId
+      currentStation: dto.endStationId,
     });
+
+    await this.adruinoService.sendSignal('2'); // Gửi tín hiệu về Arduino để thông báo xe đã được trả
     return {
       message: 'Bike returned successfully',
       rental,
