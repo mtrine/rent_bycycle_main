@@ -7,12 +7,14 @@ import { BikesModule } from '../bikes/bikes.module';
 import { RentalsRepository } from './rentals.repository';
 import { UsersModule } from '../users/users.module';
 import { TransactionsModule } from '../transactions/transactions.module';
+// import { AdruinoModule } from '../adruino/adruino.module';
 
 @Module({
   imports: [
     BikesModule,
     UsersModule,
     TransactionsModule,
+    // AdruinoModule,
     MongooseModule.forFeature([
       {
         name: Rental.name,

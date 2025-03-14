@@ -3,6 +3,7 @@ import { StationsService } from './stations.service';
 import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
 import { ResponseMessage } from 'src/decorators/response-message.decorator';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('stations')
 export class StationsController {
@@ -18,5 +19,12 @@ export class StationsController {
   @ResponseMessage('Stations fetched successfully')
   findAll(@Query('limit') limit: number, @Query('page') page: number) {
     return this.stationsService.findAll(limit, page);
+  }
+
+  @Get('nearest')
+  @ResponseMessage('Nearest station fetched successfully')
+  @Public()
+  findNearestStation(@Query('lat') latitude: number, @Query('lon') longitude: number, @Query('radius') radius: number) {
+    return this.stationsService.findNearestStation([longitude, latitude], radius);
   }
 }

@@ -15,7 +15,7 @@ import { TransactionsRepository } from '../transactions/transactions.repository,
 import { StatusRental } from 'src/enums/status-rental.enum';
 import { ReturnBikeDto } from './dto/return-bike.dto';
 import { Types } from 'mongoose';
-import { AdruinoService } from '../adruino/adruino.service';
+// import { AdruinoService } from '../adruino/adruino.service';
 
 @Injectable()
 export class RentalsService {
@@ -24,7 +24,7 @@ export class RentalsService {
     private readonly bikesRepository: BikesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly transactionsRepository: TransactionsRepository, // Thêm repository cho Transaction
-    private readonly adruinoService: AdruinoService, // Thêm service
+    // private readonly adruinoService: AdruinoService, // Thêm service
   ) {}
 
   async createRental(createRentalDto: CreateRentalDto, userId: string) {
@@ -43,6 +43,10 @@ export class RentalsService {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
+    if(bike.status === StatusBike.INUSE) {
+      throw new CustomException(ErrorCode.BIKE_ALREADY_RENTED)
+    }
+
     const rental = await this.rentalsRepository.createRental(
       createRentalDto,
       userId,
@@ -55,7 +59,7 @@ export class RentalsService {
       });
     }
 
-    await this.adruinoService.sendSignal('1'); // Gửi tín hiệu về Arduino để thông báo xe đã được thuê
+    // await this.adruinoService.sendSignal('1'); // Gửi tín hiệu về Arduino để thông báo xe đã được thuê
 
     return rental;
   }
@@ -140,7 +144,7 @@ export class RentalsService {
       currentStation: dto.endStationId,
     });
 
-    await this.adruinoService.sendSignal('2'); // Gửi tín hiệu về Arduino để thông báo xe đã được trả
+    // await this.adruinoService.sendSignal('2'); // Gửi tín hiệu về Arduino để thông báo xe đã được trả
     return {
       message: 'Bike returned successfully',
       rental,

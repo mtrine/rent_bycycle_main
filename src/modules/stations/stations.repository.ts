@@ -8,9 +8,9 @@ import { CreateStationDto } from "./dto/create-station.dto";
 export class StationsRepository {
     constructor(
         @InjectModel(Station.name) private stationModel: Model<Station>
-    ) {}
+    ) { }
 
-    async createStation(dto:CreateStationDto) {
+    async createStation(dto: CreateStationDto) {
         return this.stationModel.create({
             name: dto.name,
             address: dto.address,
@@ -18,8 +18,14 @@ export class StationsRepository {
         });
     }
 
-    async getAllStations(limit:number, skip:number) {
+    async getAllStations(limit?: number, skip?: number) {
+        if (!limit||!skip) {
+            return this.stationModel.find().lean();
+        }
         return this.stationModel.find().limit(limit).skip(skip).lean();
     }
 
+    async getAllStationsWithoutPagination() {
+        return await this.stationModel.find().exec();
+    }
 }

@@ -17,6 +17,9 @@ export class ErrorCode {
     static readonly REFRESH_TOKEN_NOT_FOUND = new ErrorCode(1413, 'Refresh token not found', HttpStatus.FORBIDDEN)
     static readonly NOT_ENOUGH_MONEY = new ErrorCode(1414, 'Not enough money', HttpStatus.BAD_REQUEST)
     static readonly BIKE_ALREADY_RETURNED = new ErrorCode(1415, 'Bike already returned', HttpStatus.BAD_REQUEST)
+    static readonly INVALID_COORDINATES = new ErrorCode(1416, 'Invalid coordinates', HttpStatus.BAD_REQUEST)
+    static readonly NOT_STAY_AT_STATION = new ErrorCode(1417, 'Not stay at station', HttpStatus.BAD_REQUEST)
+    static readonly BIKE_ALREADY_RENTED = new ErrorCode(1418, 'Bike already rented', HttpStatus.BAD_REQUEST)
     constructor(public readonly code: number, public readonly message: string, public readonly status: HttpStatus) { }
 
     toJSON() {
