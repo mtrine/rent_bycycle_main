@@ -40,4 +40,8 @@ export class StationsService {
 
     throw new CustomException(ErrorCode.NOT_STAY_AT_STATION);
   }
+
+  async getStationsSortedByDistance(userLocation: [number, number]) {
+    return this.stationsRepository.getStationsSortedByDistance(userLocation);
+  }
 }

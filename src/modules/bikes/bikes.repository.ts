@@ -48,35 +48,38 @@ export class BikesRepository {
 
 
     async getCountBikeEachSTation() {
-        return this.bikeModel.aggregate([
+        return this.bikeModel.db.collection('stations').aggregate([
             {
-                $group: {
-                    _id: "$currentStation",
-                    count: { $sum: 1 }
+                // Bắt đầu từ collection stations
+                $project: {
+                    _id: 1, // Giữ lại _id của station
+                    name: 1,// Nếu bạn muốn thêm thông tin khác của station, ví dụ: name
+                    location: 1
                 }
             },
             {
                 $lookup: {
-                    from: 'stations', // Tên collection của Station trong MongoDB (thường là lowercase của Station.name)
-                    localField: '_id', // Trường trong kết quả group (currentStation)
-                    foreignField: '_id', // Trường trong collection stations
-                    as: 'stationInfo' // Tên trường mới chứa thông tin station
+                    from: 'bikes', // Liên kết với collection bikes
+                    localField: '_id', // Trường _id trong stations
+                    foreignField: 'currentStation', // Trường currentStation trong bikes
+                    as: 'bikes' // Mảng chứa các xe tại trạm
                 }
             },
             {
-                $unwind: {
-                    path: '$stationInfo', // Giải nén mảng stationInfo thành object đơn
-                    preserveNullAndEmptyArrays: true // Giữ lại các document không có station tương ứng
+                $project: {
+                    _id: 1,
+                    name: 1, // Nếu bạn giữ lại name hoặc các trường khác
+                    location: 1,
+                    count: { $size: '$bikes' } // Đếm số lượng xe trong mảng bikes
                 }
             }
-        ]);
+        ]).toArray(); // Chuyển kết quả thành mảng
     }
-
     async findById(id: string) {
         return this.bikeModel.findById(id).lean();
     }
 
-    async updateBike(id:string, query:any){
-        return this.bikeModel.updateOne({_id:id}, query);
+    async updateBike(id: string, query: any) {
+        return this.bikeModel.updateOne({ _id: id }, query);
     }
 }

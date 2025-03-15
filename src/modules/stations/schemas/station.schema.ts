@@ -19,3 +19,4 @@ export class Station {
 }
 
 export const StationSchema = SchemaFactory.createForClass(Station);
+StationSchema.index({ location: '2dsphere' });

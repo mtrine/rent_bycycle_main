@@ -23,8 +23,13 @@ export class StationsController {
 
   @Get('nearest')
   @ResponseMessage('Nearest station fetched successfully')
-  @Public()
   findNearestStation(@Query('lat') latitude: number, @Query('lon') longitude: number, @Query('radius') radius: number) {
     return this.stationsService.findNearestStation([longitude, latitude], radius);
+  }
+
+  @Get('sorted')
+  @ResponseMessage('Stations sorted by distance fetched successfully')
+  getStationsSortedByDistance(@Query('lat') latitude: number, @Query('lon') longitude: number) {
+    return this.stationsService.getStationsSortedByDistance([longitude, latitude]);
   }
 }
