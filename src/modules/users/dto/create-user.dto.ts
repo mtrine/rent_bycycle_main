@@ -16,5 +16,6 @@ export class CreateUserDto {
   gender?: string; // Giới tính (không bắt buộc, có thể là 'male', 'female', 'other')
 
   @IsNotEmpty()
+  
   password:number
 }

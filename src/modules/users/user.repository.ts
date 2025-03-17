@@ -4,6 +4,7 @@ import { User } from "./schemas/user.schema";
 import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
+import { UtilsService } from "src/utils/utils.service";
 @Injectable()
 export class UsersRepository {
     constructor(
@@ -27,8 +28,8 @@ export class UsersRepository {
         }).lean();
     }
 
-    async findById(id: string) {
-        return await this.userModel.findById(id);
+    async findById(id: string,unSelects: string[] = []) {
+        return await this.userModel.findById(id).select(UtilsService.unGetSelectData(unSelects));
     }
 
     async updateWallet(id: string, amount: number) {
