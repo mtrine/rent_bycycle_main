@@ -58,4 +58,8 @@ export class StationsRepository {
         return R * c; // Khoảng cách (km)
     }
     
+
+    async insertManyStations(data: any[]) {
+        return this.stationModel.insertMany(data);
+    }
 }

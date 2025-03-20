@@ -15,6 +15,7 @@ import { FirebaseModule } from './modules/firebase/firebase.module';
 import { AdruinoModule } from './modules/adruino/adruino.module';
 import { PrintModule } from './modules/print/print.module';
 import { ZalopayPaymentModule } from './modules/zalopay-payment/zalopay-payment.module';
+import { DatabaseModule } from './modules/database/database.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { ZalopayPaymentModule } from './modules/zalopay-payment/zalopay-payment.
     FirebaseModule,
     AdruinoModule,
     PrintModule,
-    ZalopayPaymentModule
+    ZalopayPaymentModule,
+    DatabaseModule
 
   ],
   controllers: [AppController],
