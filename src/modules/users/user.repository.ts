@@ -5,6 +5,9 @@ import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
 import { UtilsService } from "src/utils/utils.service";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { CustomException } from "src/exception-handle/custom-exception";
+import { ErrorCode } from "src/enums/error-code.enum";
 @Injectable()
 export class UsersRepository {
     constructor(
@@ -28,7 +31,7 @@ export class UsersRepository {
         }).lean();
     }
 
-    async findById(id: string,unSelects: string[] = []) {
+    async findById(id: string, unSelects: string[] = []) {
         return await this.userModel.findById(id).select(UtilsService.unGetSelectData(unSelects));
     }
 
@@ -44,5 +47,13 @@ export class UsersRepository {
             { phoneNumber },
             { $set: { isVerified: true } },
         );
+    }
+
+    async updateProfile(id: string, dto: UpdateUserDto) {
+        return this.userModel.findByIdAndUpdate(id, {
+            fullName: dto.fullName,
+            dateOfBirth: dto.dateOfBirth,
+            gender: dto.gender
+        }, { new: true });
     }
 }

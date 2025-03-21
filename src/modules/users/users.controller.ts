@@ -15,4 +15,10 @@ export class UsersController {
   getMyInfo(@User() user: UserInterface) {
     return this.usersService.findById(user._id);
   }
+
+  @Patch('update-profile')
+  @ResponseMessage('Update profile successfully')
+  updateProfile(@User() user: UserInterface, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateProfile(user._id, updateUserDto);
+  }
 }
