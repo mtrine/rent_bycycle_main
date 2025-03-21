@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
 import { RentalsRepository } from './rentals.repository';
@@ -15,7 +20,8 @@ import { TransactionsRepository } from '../transactions/transactions.repository,
 import { StatusRental } from 'src/enums/status-rental.enum';
 import { ReturnBikeDto } from './dto/return-bike.dto';
 import { Types } from 'mongoose';
-// import { AdruinoService } from '../adruino/adruino.service';
+import { SerialPort } from 'serialport';
+import path from 'path';
 
 @Injectable()
 export class RentalsService {
@@ -24,7 +30,6 @@ export class RentalsService {
     private readonly bikesRepository: BikesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly transactionsRepository: TransactionsRepository, // Thêm repository cho Transaction
-    // private readonly adruinoService: AdruinoService, // Thêm service
   ) {}
 
   async createRental(createRentalDto: CreateRentalDto, userId: string) {
@@ -43,9 +48,18 @@ export class RentalsService {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
-    if(bike.status === StatusBike.INUSE) {
-      throw new CustomException(ErrorCode.BIKE_ALREADY_RENTED)
-    }
+    const serialPort = bike.serialPort;
+    const port = new SerialPort({
+      path: serialPort,
+      baudRate: 9600,
+    });
+
+    port.on('open', () => console.log('Arduino connected!'));
+    port.on('error', (err) => console.error('Arduino error:', err));
+
+    port.write('1', (err) => {
+      if (err) console.error('Error sending signal:', err);
+    });
 
     const rental = await this.rentalsRepository.createRental(
       createRentalDto,
@@ -58,8 +72,6 @@ export class RentalsService {
         status: StatusBike.INUSE,
       });
     }
-
-    // await this.adruinoService.sendSignal('1'); // Gửi tín hiệu về Arduino để thông báo xe đã được thuê
 
     return rental;
   }
@@ -137,6 +149,24 @@ export class RentalsService {
     rental.endStation = new Types.ObjectId(dto.endStationId); // Giả sử có trường endStation trong Rental schema
     rental.status = StatusRental.COMPLETED;
     await rental.save();
+
+    const bike = await this.bikesRepository.findById(rental.bikeId.toString());
+
+    if (!bike) {
+      throw new CustomException(ErrorCode.NOT_FOUND);
+    }
+    const serialPort = bike.serialPort;
+    const port = new SerialPort({
+      path: serialPort,
+      baudRate: 9600,
+    });
+
+    port.on('open', () => console.log('Arduino connected!'));
+    port.on('error', (err) => console.error('Arduino error:', err));
+
+    port.write('2', (err) => {
+      if (err) console.error('Error sending signal:', err);
+    });
 
     // 8. Cập nhật trạng thái xe về AVAILABLE
     await this.bikesRepository.updateBike(rental.bikeId.toString(), {
