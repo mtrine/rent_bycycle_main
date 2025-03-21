@@ -7,11 +7,9 @@ export class CreateUserDto {
   @IsString()
   fullName: string; // Họ tên người dùng
 
-  @IsOptional()
   @IsDateString()
   dateOfBirth?: Date; // Ngày sinh (không bắt buộc)
 
-  @IsNotEmpty()
   @IsString()
   gender?: string; // Giới tính (không bắt buộc, có thể là 'male', 'female', 'other')
 

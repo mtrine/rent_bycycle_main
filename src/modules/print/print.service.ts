@@ -34,6 +34,11 @@ export class PrintService {
                 align: 'center',
                 valign: 'center',
             });
+            doc.moveDown(); // Xuống dòng
+            doc.fontSize(16).text(`Mã xe: ${bike.bikeCode}`, {
+                align: 'center',
+            });
+
             doc.end();
 
             stream.on('finish', () => resolve(outputPath));

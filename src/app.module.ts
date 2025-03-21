@@ -14,6 +14,7 @@ import { OtpTokenModule } from './modules/otp-token/otp-token.module';
 import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PrintModule } from './modules/print/print.module';
 import { ZalopayPaymentModule } from './modules/zalopay-payment/zalopay-payment.module';
+import { DatabaseModule } from './modules/database/database.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { ZalopayPaymentModule } from './modules/zalopay-payment/zalopay-payment.
     OtpTokenModule,
     FirebaseModule,
     PrintModule,
-    ZalopayPaymentModule
+    ZalopayPaymentModule,
+    DatabaseModule
 
   ],
   controllers: [AppController],

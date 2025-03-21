@@ -11,8 +11,8 @@ export class PrintController {
   constructor(private readonly printService: PrintService) { }
 
   @Get()
-  @Roles(Role.ADMIN)
   @ResponseMessage('Create PDF successfully')
+  @Public()
   async downloadPdf(@Query('bikeId') bikeId: string, @Res() res: Response) {
     try {
       const pdfPath = await this.printService.generatePdfFromImage(bikeId);

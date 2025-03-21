@@ -15,7 +15,8 @@ export class Station {
     type: [Number],
     required: true,
   })
-  location: [number, number];
+  location: [number, number];// [longitude, latitude]
 }
 
 export const StationSchema = SchemaFactory.createForClass(Station);
+StationSchema.index({ location: '2dsphere' });

@@ -2,33 +2,23 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from 'src/decorators/user-infor.decorator';
+import { UserInterface } from './dto/user.interface';
+import { ResponseMessage } from 'src/decorators/response-message.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Get('get-my-info')
+  @ResponseMessage('Get my info successfully')
+  getMyInfo(@User() user: UserInterface) {
+    return this.usersService.findById(user._id);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Patch('update-profile')
+  @ResponseMessage('Update profile successfully')
+  updateProfile(@User() user: UserInterface, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateProfile(user._id, updateUserDto);
   }
 }

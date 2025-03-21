@@ -20,10 +20,13 @@ export class TransactionsRepository {
         });
     }
 
-    async updateStatus (id: string, status: string) {
+    async updateStatus(id: string, status: string) {
         return await this.transactionModel.findByIdAndUpdate(id, {
             $set: { status }
         }, { new: true }).lean();
     }
 
+    async getMyTransactions(userId: string) {
+        return await this.transactionModel.find({ userId }).lean();
+    }
 }
