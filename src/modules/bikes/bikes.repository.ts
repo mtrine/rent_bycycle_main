@@ -26,6 +26,7 @@ export class BikesRepository {
             bikeCode,
             qrCode,
             currentStation: dto.currentStation,
+            serialPort: dto.serialPort,
             lastUsed: new Date(),
         });
 
