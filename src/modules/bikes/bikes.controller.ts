@@ -19,4 +19,10 @@ export class BikesController {
   getCountBikeEachSTation() {
     return this.bikesService.getCountBikeEachSTation();
   }
+
+  @Get('qr-code/:qrCode')
+  @ResponseMessage('Get bike by qr code')
+  getBikeByQrCode(@Param('qrCode') qrCode: string) {
+    return this.bikesService.getBikeByQrCode(qrCode);
+  }
 }

@@ -22,7 +22,10 @@ export class TransactionsRepository {
 
     async updateStatus(id: string, status: string) {
         return await this.transactionModel.findByIdAndUpdate(id, {
-            $set: { status }
+            $set: {
+                status, 
+                expiresAt: null
+            }
         }, { new: true }).lean();
     }
 

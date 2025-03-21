@@ -82,4 +82,8 @@ export class BikesRepository {
     async updateBike(id: string, query: any) {
         return this.bikeModel.updateOne({ _id: id }, query);
     }
+
+    async findByQRCode(qrCode: string) {
+        return this.bikeModel.findOne({ qrCode }).lean();
+    }
 }

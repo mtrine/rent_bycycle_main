@@ -16,4 +16,7 @@ export class BikesService {
     return await this.bikesRepository.getCountBikeEachSTation();
   }
 
+  async getBikeByQrCode(qrCode: string) {
+    return await this.bikesRepository.findByQRCode(qrCode);
+  }
 }

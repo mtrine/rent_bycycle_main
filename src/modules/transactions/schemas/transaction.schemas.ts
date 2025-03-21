@@ -1,4 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import * as moment from 'moment';
 import mongoose, { Types } from 'mongoose';
 import { PaymentMethod } from 'src/enums/paymentMethod.enum';
 import { StatusTransaction } from 'src/enums/status-transaction.enum';
@@ -47,7 +48,11 @@ export class Transaction {
         default: StatusTransaction.PENDING,
     })
     status: string;
+
+    @Prop({ type: Date, default: () => moment().add(10, 'minutes').toDate(), index: { expireAfterSeconds: 0 } })
+    expiresAt: Date;
 }
 
 // Tạo schema factory
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+TransactionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
