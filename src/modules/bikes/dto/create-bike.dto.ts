@@ -10,4 +10,8 @@ export class CreateBikeDto {
   @Type(() => String)
   @IsString()
   currentStation?: string;
+
+  @IsOptional()
+  @IsString()
+  serialPort?: string;
 }

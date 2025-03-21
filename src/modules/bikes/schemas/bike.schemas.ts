@@ -32,6 +32,9 @@ export class Bike extends Document {
     // Thời gian sử dụng cuối cùng
     @Prop({ type: Date, default: null })
     lastUsed: Date;
+
+    @Prop({ type:String})
+    serialPort: string;
 }
 
 // Tạo schema factory
