@@ -85,6 +85,8 @@ export class BikesRepository {
     }
 
     async findByQRCode(qrCode: string) {
-        return this.bikeModel.findOne({ qrCode }).lean();
+        return this.bikeModel.findOne({ qrCode })
+        .populate('currentStation','name _id')
+        .lean();
     }
 }

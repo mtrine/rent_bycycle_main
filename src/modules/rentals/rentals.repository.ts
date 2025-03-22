@@ -4,6 +4,7 @@ import { Rental } from './schemas/rental.schema';
 import { Model } from 'mongoose';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { start } from 'repl';
+import { StatusRental } from 'src/enums/status-rental.enum';
 
 @Injectable()
 export class RentalsRepository {
@@ -46,4 +47,11 @@ export class RentalsRepository {
       )
       .lean();
   }
+
+  async getOngoingRental(userId: string){
+    return await this.rentalModel.findOne({ 
+        userId, 
+        status: StatusRental.ONGOING 
+    }).populate('bikeId','bikeCode _id').lean();
+}
 }

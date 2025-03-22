@@ -9,6 +9,7 @@ export class BikesService {
     private readonly bikesRepository: BikesRepository
   ) { }
   async create(createBikeDto: CreateBikeDto) {
+    console.log('createBikeDto', createBikeDto);
     return await this.bikesRepository.createBike(createBikeDto);
   }
 

@@ -33,7 +33,7 @@ export class Bike extends Document {
     @Prop({ type: Date, default: null })
     lastUsed: Date;
 
-    @Prop({ type:String})
+    @Prop({ type: String, default: null })
     serialPort: string;
 }
 

@@ -11,19 +11,25 @@ export class TransactionsRepository {
     ) { }
 
     async createTransaction(dto: CreateTransactionDto) {
-        return await this.transactionModel.create({
+        const transactionData: any = {
             userId: dto.userId,
             amount: dto.amount,
             paymentMethod: dto.paymentMethod,
             type: dto.type,
             rentalId: dto.rentalId,
-        });
+        };
+
+        if (dto.status) {
+            transactionData.status = dto.status;
+        }
+
+        return await this.transactionModel.create(transactionData);
     }
 
     async updateStatus(id: string, status: string) {
         return await this.transactionModel.findByIdAndUpdate(id, {
             $set: {
-                status, 
+                status,
                 expiresAt: null
             }
         }, { new: true }).lean();

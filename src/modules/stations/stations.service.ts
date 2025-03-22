@@ -21,20 +21,19 @@ export class StationsService {
     return UtilsService.paginateResponse(stationList, limit, page);
   }
 
-  async findNearestStation(userLocation: [number, number], radius: number = 2) {
+  async findNearestStation(userLocation: [number, number], radius: number = 7) {
     const stations = await this.stationsRepository.getAllStations(); // Lấy danh sách tất cả station
 
     for (const station of stations) {
       const stationLocation = station.location; // [longitude, latitude]
 
       // Tính khoảng cách giữa tọa độ người dùng và station bằng Haversine
-      const distance = haversine(
-        { latitude: userLocation[1], longitude: userLocation[0] },
-        { latitude: stationLocation[1], longitude: stationLocation[0] }
+      const distance = this.haversine(
+        userLocation[1], userLocation[0],  // latitude, longitude của user
+        stationLocation[1], stationLocation[0]  // latitude, longitude của station
       );
-
       if (distance <= radius) {
-        return station; // Trả về station nếu trong bán kính
+        return station; // Trả về station nếu trong bán kính 3m
       }
     }
 
@@ -43,5 +42,20 @@ export class StationsService {
 
   async getStationsSortedByDistance(userLocation: [number, number]) {
     return this.stationsRepository.getStationsSortedByDistance(userLocation);
+  }
+
+  private haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371000; // Bán kính Trái Đất (mét)
+    const phi1 = (lat1 * Math.PI) / 180;
+    const phi2 = (lat2 * Math.PI) / 180;
+    const deltaPhi = ((lat2 - lat1) * Math.PI) / 180;
+    const deltaLambda = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(deltaPhi / 2) ** 2 +
+      Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Khoảng cách tính bằng mét
   }
 }

@@ -21,20 +21,6 @@ export class User {
   })
   gender: string;
 
-  //   @Prop({
-  //     type: {
-  //       balance: { type: Number, default: 0, min: 0 }, // Không cho phép số dư âm
-  //       debt: { type: Number, default: 0, min: 0 },
-  //       lastUpdated: { type: Date, default: Date.now }, // Thời gian cập nhật số dư cuối cùng
-  //     },
-  //     default: { balance: 0, debt: 0, lastUpdated: Date.now },
-  //   })
-  //   wallet: {
-  //     balance: number;
-  //     debt: number;
-  //     lastUpdated: Date;
-  //   };
-
   @Prop({
     type: {
       balance: { type: Number, default: 0, min: 0 }, // Không cho phép số dư âm

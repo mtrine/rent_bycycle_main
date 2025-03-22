@@ -25,4 +25,7 @@ export class CreateTransactionDto {
     @IsEnum(PaymentMethod, { message: 'Invalid payment method' })
     paymentMethod: string;
 
+    @IsOptional()
+    status?: StatusTransaction;
+
 }

@@ -9,17 +9,27 @@ import { ReturnBikeDto } from './dto/return-bike.dto';
 
 @Controller('rentals')
 export class RentalsController {
-  constructor(private readonly rentalsService: RentalsService) {}
+  constructor(private readonly rentalsService: RentalsService) { }
 
   @Post()
   @ResponseMessage('Create rental successfully')
-  create(@Body() createRentalDto: CreateRentalDto,@User() user:UserInterface) {
-    return this.rentalsService.createRental(createRentalDto,user._id);
+  create(@Body() createRentalDto: CreateRentalDto, @User() user: UserInterface) {
+    return this.rentalsService.createRental(createRentalDto, user._id);
   }
 
   @Patch('/return-bike')
   @ResponseMessage('Return bike successfully')
-  returnBike(@Body() dto:ReturnBikeDto,@User() user:UserInterface) {
-    return this.rentalsService.returnBike(dto,user._id);
+  returnBike(@Body() dto: ReturnBikeDto, @User() user: UserInterface) {
+    return this.rentalsService.returnBike(dto, user._id);
+  }
+
+  @Get('check-user')
+  @ResponseMessage('User has ongoing rental')
+  async checkUserRental(@User() user: UserInterface) {
+    const rental = await this.rentalsService.getOngoingRental(user._id);
+    if (rental) {
+      return rental;
+    }
+    return null;
   }
 }
