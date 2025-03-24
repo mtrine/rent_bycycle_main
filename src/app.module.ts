@@ -15,6 +15,7 @@ import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PrintModule } from './modules/print/print.module';
 import { ZalopayPaymentModule } from './modules/zalopay-payment/zalopay-payment.module';
 import { DatabaseModule } from './modules/database/database.module';
+import { BikeReportModule } from './modules/bike-report/bike-report.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { DatabaseModule } from './modules/database/database.module';
     FirebaseModule,
     PrintModule,
     ZalopayPaymentModule,
-    DatabaseModule
+    DatabaseModule,
+    BikeReportModule
 
   ],
   controllers: [AppController],

@@ -51,6 +51,9 @@ export class RentalsService {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
+    if(bike.status !== StatusBike.AVAILABLE) {
+      throw new CustomException(ErrorCode.BIKE_NOT_AVAILABLE);
+    }
     // const serialPort = bike.serialPort;
     // const port = new SerialPort({
     //   path: serialPort,
@@ -112,7 +115,6 @@ export class RentalsService {
     // 3. Lấy thông tin user và wallet
     const user = await this.usersRepository.findById(userId);
     if (!user) {
-      console.log('user');
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 

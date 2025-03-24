@@ -21,6 +21,7 @@ export class ErrorCode {
     static readonly NOT_STAY_AT_STATION = new ErrorCode(1417, 'Not stay at station', HttpStatus.BAD_REQUEST)
     static readonly BIKE_ALREADY_RENTED = new ErrorCode(1418, 'Bike already rented', HttpStatus.BAD_REQUEST)
     static readonly RENTAL_ALREADY_EXISTS = new ErrorCode(1419, 'Rental already exists', HttpStatus.BAD_REQUEST)
+    static readonly BIKE_NOT_AVAILABLE = new ErrorCode(1420, 'Bike not available', HttpStatus.BAD_REQUEST)
     constructor(public readonly code: number, public readonly message: string, public readonly status: HttpStatus) { }
 
     toJSON() {

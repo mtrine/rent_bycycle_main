@@ -158,7 +158,7 @@ export class AuthService {
         // Cập nhật refresh token trong cơ sở dữ liệu
         await this.keyTokenService.updateKeyToken(holderToken._id.toString(), refreshToken, newRefreshToken);
 
-        res.cookie('refresh_token', refreshToken, {
+        res.cookie('refresh_token', newRefreshToken, {
             httpOnly: true,
             secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
             maxAge: +ms(`${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`),

@@ -33,7 +33,7 @@ export class BikesRepository {
 
     }
 
-    private async generateQRCode(text: string, filePath: string): Promise<void> {
+    private async generateQRCode(text: string, filePath: string) {
         const dir = path.dirname(filePath);
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true }); // Tạo thư mục nếu chưa tồn tại
