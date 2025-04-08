@@ -28,6 +28,7 @@ export class StationsController {
   }
 
   @Get('sorted')
+  @Public()
   @ResponseMessage('Stations sorted by distance fetched successfully')
   getStationsSortedByDistance(@Query('lat') latitude: number, @Query('lon') longitude: number) {
     return this.stationsService.getStationsSortedByDistance([longitude, latitude]);

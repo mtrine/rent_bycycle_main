@@ -6,6 +6,7 @@ import { User } from 'src/decorators/user-infor.decorator';
 import { UserInterface } from '../users/dto/user.interface';
 import { ResponseMessage } from 'src/decorators/response-message.decorator';
 import { ReturnBikeDto } from './dto/return-bike.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('rentals')
 export class RentalsController {
@@ -32,4 +33,12 @@ export class RentalsController {
     }
     return null;
   }
+
+  // @Get()
+  // @ResponseMessage('Get all rentals')
+  // @Public()
+  // async findAll() {
+   
+  //   return this.rentalsService.connectPort('COM4', '2');
+  // }
 }

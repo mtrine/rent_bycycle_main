@@ -25,12 +25,14 @@ import path from 'path';
 
 @Injectable()
 export class RentalsService {
+  private port: SerialPort;
   constructor(
     private readonly rentalsRepository: RentalsRepository,
     private readonly bikesRepository: BikesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly transactionsRepository: TransactionsRepository, // Thêm repository cho Transaction
   ) { }
+
 
   async createRental(createRentalDto: CreateRentalDto, userId: string) {
     const user = await this.usersRepository.findById(userId);
@@ -51,22 +53,11 @@ export class RentalsService {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
 
-    if(bike.status !== StatusBike.AVAILABLE) {
+    if (bike.status !== StatusBike.AVAILABLE) {
       throw new CustomException(ErrorCode.BIKE_NOT_AVAILABLE);
     }
-    // const serialPort = bike.serialPort;
-    // const port = new SerialPort({
-    //   path: serialPort,
-    //   baudRate: 9600,
-    // });
-
-    // port.on('open', () => console.log('Arduino connected!'));
-    // port.on('error', (err) => console.error('Arduino error:', err));
-
-    // port.write('1', (err) => {
-    //   if (err) console.error('Error sending signal:', err);
-    // });
-
+    const serialPort = bike.serialPort;
+    await this.connectPort(serialPort, '1');
     const rental = await this.rentalsRepository.createRental(
       createRentalDto,
       userId,
@@ -160,26 +151,14 @@ export class RentalsService {
     if (!bike) {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
-    // const serialPort = bike.serialPort;
-    // const port = new SerialPort({
-    //   path: serialPort,
-    //   baudRate: 9600,
-    // });
-
-    // port.on('open', () => console.log('Arduino connected!'));
-    // port.on('error', (err) => console.error('Arduino error:', err));
-
-    // port.write('2', (err) => {
-    //   if (err) console.error('Error sending signal:', err);
-    // });
-
+    const serialPort = bike.serialPort;
+    await this.connectPort(serialPort, '2');
     // 8. Cập nhật trạng thái xe về AVAILABLE
     await this.bikesRepository.updateBike(rental.bikeId.toString(), {
       status: StatusBike.AVAILABLE,
       currentStation: dto.endStationId,
     });
 
-    // await this.adruinoService.sendSignal('2'); // Gửi tín hiệu về Arduino để thông báo xe đã được trả
     return {
       message: 'Bike returned successfully',
       rental,
@@ -189,5 +168,35 @@ export class RentalsService {
 
   async getOngoingRental(userId: string) {
     return await this.rentalsRepository.getOngoingRental(userId);
+  }
+
+  async connectPort(port: string, command: string) {
+    {
+      try {
+        if (!this.port || !this.port.isOpen) {
+          console.log("Opening new Arduino connection...");
+          this.port = new SerialPort({
+            path: port,
+            baudRate: 9600,
+          });
+
+          this.port.on("open", () => console.log("Arduino connected!"));
+          this.port.on("error", (err) => console.error("Arduino error:", err));
+
+          // Đợi 1s để chắc chắn cổng đã mở trước khi gửi lệnh
+          await new Promise((resolve) => setTimeout(resolve, 1800));
+        }
+
+        this.port.write(command, (err) => {
+          if (err) {
+            console.error("Error sending signal:", err);
+          } else {
+            console.log("Signal sent successfully");
+          }
+        });
+      } catch (error) {
+        console.error("Unexpected error in Arduino communication:", error);
+      }
+    }
   }
 }

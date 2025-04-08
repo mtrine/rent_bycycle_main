@@ -15,8 +15,8 @@ export class BikeReportService {
     private bikeRepository: BikesRepository
   ) { }
 
-  async create(createBikeReportDto: CreateBikeReportDto) {
-    const report = await this.bikeReportRepository.create(createBikeReportDto);
+  async create(createBikeReportDto: CreateBikeReportDto,userId: string) {
+    const report = await this.bikeReportRepository.create(createBikeReportDto,userId);
     await this.bikeRepository.updateBike(createBikeReportDto.bike, {
       status: StatusBike.MAINTENANCE
     });

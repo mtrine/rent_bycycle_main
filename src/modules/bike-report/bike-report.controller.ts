@@ -3,6 +3,8 @@ import { BikeReportService } from './bike-report.service';
 import { CreateBikeReportDto } from './dto/create-bike-report.dto';
 import { UpdateBikeReportDto } from './dto/update-bike-report.dto';
 import { ResponseMessage } from 'src/decorators/response-message.decorator';
+import { User } from 'src/decorators/user-infor.decorator';
+import { UserInterface } from '../users/dto/user.interface';
 
 @Controller('bike-report')
 export class BikeReportController {
@@ -10,8 +12,8 @@ export class BikeReportController {
 
   @Post()
   @ResponseMessage('Create bike report successfully')
-  async create(@Body() createBikeReportDto: CreateBikeReportDto) {
-    return await this.bikeReportService.create(createBikeReportDto);
+  async create(@Body() createBikeReportDto: CreateBikeReportDto, @User() user: UserInterface) {
+    return await this.bikeReportService.create(createBikeReportDto, user._id);
   }
 
   @Get('today')
@@ -29,7 +31,7 @@ export class BikeReportController {
   @Patch('fixed/:id')
   @ResponseMessage('Update status to fixed successfully')
   async updateStatusToFixed(@Param('id') id: string) {
-    
+
     return await this.bikeReportService.updateStatusToFixed(id);
   }
 }

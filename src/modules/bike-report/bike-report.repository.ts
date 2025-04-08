@@ -10,10 +10,11 @@ export class BikeReportRepository {
         @InjectModel(BikeReport.name) private readonly bikeReportModel: Model<BikeReport>
     ) { }
 
-    async create(dto: CreateBikeReportDto) {
+    async create(dto: CreateBikeReportDto,userId:string) {
         return this.bikeReportModel.create({
             bike: dto.bike,
             location: dto.location,
+            userId:userId
         });
     }
 
