@@ -10,18 +10,26 @@ import { StatusRental } from 'src/enums/status-rental.enum';
 export class RentalsRepository {
   constructor(
     @InjectModel(Rental.name) private readonly rentalModel: Model<Rental>,
-  ) {}
+  ) { }
 
   async createRental(
     createRentalDto: CreateRentalDto,
     userId: string,
     startStationId: string,
   ) {
-    return await this.rentalModel.create({
+    const rental = await this.rentalModel.create({
       bikeId: createRentalDto.bikeId,
       userId: userId,
       startStation: startStationId,
-    });
+    }) as any;
+
+    // Cập nhật startTime = createdAt sau khi đã tạo
+    rental.startTime = rental.createdAt;
+    console.log(rental.startTime);
+    console.log(rental.createdAt);
+    await rental.save();
+
+    return rental;
   }
 
   async findById(rentalId: string, userId: string) {
@@ -48,10 +56,10 @@ export class RentalsRepository {
       .lean();
   }
 
-  async getOngoingRental(userId: string){
-    return await this.rentalModel.findOne({ 
-        userId, 
-        status: StatusRental.ONGOING 
-    }).populate('bikeId','bikeCode _id').lean();
-}
+  async getOngoingRental(userId: string) {
+    return await this.rentalModel.findOne({
+      userId,
+      status: StatusRental.ONGOING
+    }).populate('bikeId', 'bikeCode _id').lean();
+  }
 }

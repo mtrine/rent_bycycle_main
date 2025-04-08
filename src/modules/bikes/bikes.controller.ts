@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { BikesService } from './bikes.service';
 import { CreateBikeDto } from './dto/create-bike.dto';
 import { UpdateBikeDto } from './dto/update-bike.dto';
@@ -16,8 +16,8 @@ export class BikesController {
 
   @Get('count')
   @ResponseMessage('Get count bike each station')
-  getCountBikeEachSTation() {
-    return this.bikesService.getCountBikeEachSTation();
+  getCountBikeEachSTation(@Query('lat') lat: number, @Query('lon') lon: number) {
+    return this.bikesService.getCountBikeEachSTation(lat, lon);
   }
 
   @Get('qr-code/:qrCode')

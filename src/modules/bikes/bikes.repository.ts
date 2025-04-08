@@ -55,7 +55,8 @@ export class BikesRepository {
                 $project: {
                     _id: 1, // Giữ lại _id của station
                     name: 1,// Nếu bạn muốn thêm thông tin khác của station, ví dụ: name
-                    location: 1
+                    location: 1,
+                    address: 1,
                 }
             },
             {
@@ -71,6 +72,7 @@ export class BikesRepository {
                     _id: 1,
                     name: 1, // Nếu bạn giữ lại name hoặc các trường khác
                     location: 1,
+                    address: 1,
                     count: { $size: '$bikes' } // Đếm số lượng xe trong mảng bikes
                 }
             }
@@ -86,7 +88,7 @@ export class BikesRepository {
 
     async findByQRCode(qrCode: string) {
         return this.bikeModel.findOne({ qrCode })
-        .populate('currentStation','name _id')
-        .lean();
+            .populate('currentStation', 'name _id')
+            .lean();
     }
 }

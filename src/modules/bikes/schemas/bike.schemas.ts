@@ -6,7 +6,7 @@ import { Station } from 'src/modules/stations/schemas/station.schema';
 @Schema({
     timestamps: true, // Tự động thêm createdAt và updatedAt
 })
-export class Bike extends Document {
+export class Bike  {
 
     // Mã xe duy nhất (liên kết với mã QR)
     @Prop({ required: true, unique: true })
