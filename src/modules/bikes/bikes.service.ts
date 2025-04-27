@@ -26,6 +26,10 @@ export class BikesService {
     return await this.bikesRepository.findByQRCode(qrCode);
   }
 
+  async findAll(limit: number = 20, page: number = 1) {
+    const bikeList = await this.bikesRepository.findAll(limit, (page - 1) * limit);
+    return bikeList;
+  }
   // // Công thức Haversine
   private calculateHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
     const toRad = (x: number) => (x * Math.PI) / 180;

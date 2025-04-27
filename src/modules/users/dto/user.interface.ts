@@ -5,4 +5,5 @@ export interface UserInterface {
     fullName: string;
     dateOfBirth: Date;
     role: string;
+    isVerified: boolean;
 }

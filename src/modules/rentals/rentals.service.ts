@@ -56,8 +56,8 @@ export class RentalsService {
     if (bike.status !== StatusBike.AVAILABLE) {
       throw new CustomException(ErrorCode.BIKE_NOT_AVAILABLE);
     }
-    const serialPort = bike.serialPort;
-    await this.connectPort(serialPort, '1');
+    // const serialPort = bike.serialPort;
+    // await this.connectPort(serialPort, '1');
     const rental = await this.rentalsRepository.createRental(
       createRentalDto,
       userId,
@@ -151,8 +151,8 @@ export class RentalsService {
     if (!bike) {
       throw new CustomException(ErrorCode.NOT_FOUND);
     }
-    const serialPort = bike.serialPort;
-    await this.connectPort(serialPort, '2');
+    // const serialPort = bike.serialPort;
+    // await this.connectPort(serialPort, '2');
     // 8. Cập nhật trạng thái xe về AVAILABLE
     await this.bikesRepository.updateBike(rental.bikeId.toString(), {
       status: StatusBike.AVAILABLE,

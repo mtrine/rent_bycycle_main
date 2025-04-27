@@ -4,6 +4,8 @@ import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
 import { ResponseMessage } from 'src/decorators/response-message.decorator';
 import { Public } from 'src/decorators/public.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum';
 
 @Controller('stations')
 export class StationsController {
@@ -32,5 +34,12 @@ export class StationsController {
   @ResponseMessage('Stations sorted by distance fetched successfully')
   getStationsSortedByDistance(@Query('lat') latitude: number, @Query('lon') longitude: number) {
     return this.stationsService.getStationsSortedByDistance([longitude, latitude]);
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN)
+  @ResponseMessage('Station updated successfully')
+  update(@Param('id') id: string, @Body() updateStationDto: UpdateStationDto) {
+    return this.stationsService.update(id, updateStationDto);
   }
 }

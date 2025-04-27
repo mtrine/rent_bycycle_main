@@ -64,6 +64,8 @@ export class AuthService {
         return {
             user_id: user._id,
             user_role: user.role,
+            isVerified: user.isVerified,
+            phoneNumber: user.phoneNumber,
         };
     }
 
@@ -92,7 +94,7 @@ export class AuthService {
                 maxAge: +ms(`${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`),
                 sameSite: 'none'
             })
-    
+
             res.cookie('access_token', accessToken, {
                 httpOnly: true,
                 secure: this.configService.get<string>('NODE_ENV') === 'production' ? true : false,
@@ -103,6 +105,8 @@ export class AuthService {
         return {
             user_id: user._id,
             user_role: user.role,
+            isVerified: user.isVerified,
+            phoneNumber: user.phoneNumber,
         };
     }
 
@@ -175,6 +179,8 @@ export class AuthService {
         return {
             user_id: foundUser._id,
             user_role: foundUser.role,
+            isVerified: foundUser.isVerified,
+            phoneNumber: foundUser.phoneNumber,
         };
     }
 

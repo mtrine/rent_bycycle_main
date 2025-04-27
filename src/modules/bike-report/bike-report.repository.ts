@@ -10,26 +10,37 @@ export class BikeReportRepository {
         @InjectModel(BikeReport.name) private readonly bikeReportModel: Model<BikeReport>
     ) { }
 
-    async create(dto: CreateBikeReportDto,userId:string) {
+    async create(dto: CreateBikeReportDto, userId: string) {
         return this.bikeReportModel.create({
             bike: dto.bike,
             location: dto.location,
-            userId:userId
+            userId: userId
         });
     }
 
     async find(query: any, limit?: number, skip?: number) {
         if (!limit || !skip) {
-            return this.bikeReportModel.find(query).lean();
+            return this.bikeReportModel.find(query).populate("bike", "qrCode name bikeCode")
+                .populate("userId", "fullName phoneNumber").lean();
         }
         return this.bikeReportModel
             .find(query)
+            .populate("bike", "qrCode name bikeCode")
+            .populate("userId", "fullName phoneNumber")
             .limit(limit)
             .skip(skip)
+            .sort({ createdAt: -1 })
             .lean();
         ;
     }
 
+    async findAll() {
+        return this.bikeReportModel.find()
+            .populate("bike", "qrCode name bikeCode")
+            .populate("userId", "fullName phoneNumber")
+            .sort({ createdAt: -1 })
+            .lean();
+    }
     async updateStatus(id: string, status: string) {
         return this.bikeReportModel.findByIdAndUpdate(
             id,

@@ -21,7 +21,7 @@ export class StationsService {
     return UtilsService.paginateResponse(stationList, limit, page);
   }
 
-  async findNearestStation(userLocation: [number, number], radius: number = 7) {
+  async findNearestStation(userLocation: [number, number], radius: number = 10) {
     const stations = await this.stationsRepository.getAllStations(); // Lấy danh sách tất cả station
 
     for (const station of stations) {
@@ -44,6 +44,14 @@ export class StationsService {
     return this.stationsRepository.getStationsSortedByDistance(userLocation);
   }
 
+  async update(id: string, updateStationDto: UpdateStationDto) {
+    const station = await this.stationsRepository.updateStation(id, updateStationDto);
+    if (!station) {
+      throw new CustomException(ErrorCode.NOT_FOUND);
+    }
+    return station;
+  }
+  
   private haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371000; // Bán kính Trái Đất (mét)
     const phi1 = (lat1 * Math.PI) / 180;
@@ -56,6 +64,6 @@ export class StationsService {
       Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; // Khoảng cách tính bằng mét
+    return R * c;
   }
 }

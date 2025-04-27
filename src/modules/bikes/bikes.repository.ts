@@ -86,6 +86,13 @@ export class BikesRepository {
         return this.bikeModel.updateOne({ _id: id }, query);
     }
 
+    async findAll(limit: number, skip: number) {
+        return this.bikeModel.find()
+            .limit(limit)
+            .skip(skip)
+            .populate('currentStation', 'name _id')
+            .lean();
+    }
     async findByQRCode(qrCode: string) {
         return this.bikeModel.findOne({ qrCode })
             .populate('currentStation', 'name _id')

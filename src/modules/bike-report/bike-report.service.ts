@@ -15,8 +15,8 @@ export class BikeReportService {
     private bikeRepository: BikesRepository
   ) { }
 
-  async create(createBikeReportDto: CreateBikeReportDto,userId: string) {
-    const report = await this.bikeReportRepository.create(createBikeReportDto,userId);
+  async create(createBikeReportDto: CreateBikeReportDto, userId: string) {
+    const report = await this.bikeReportRepository.create(createBikeReportDto, userId);
     await this.bikeRepository.updateBike(createBikeReportDto.bike, {
       status: StatusBike.MAINTENANCE
     });
@@ -53,6 +53,10 @@ export class BikeReportService {
       status: StatusBike.AVAILABLE
     })
     return report;
+  }
+
+  async findAll() {
+    return await this.bikeReportRepository.findAll();
   }
 }
 

@@ -30,6 +30,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
         return {
             _id: user._id,
             fullName: user.fullName,
+            user_role: user.role,
         };
     }
 }
