@@ -21,7 +21,7 @@ export class StationsService {
     return UtilsService.paginateResponse(stationList, limit, page);
   }
 
-  async findNearestStation(userLocation: [number, number], radius: number = 10) {
+  async findNearestStation(userLocation: [number, number], radius: number = 40) {
     const stations = await this.stationsRepository.getAllStations(); // Lấy danh sách tất cả station
 
     for (const station of stations) {
